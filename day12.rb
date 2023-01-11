@@ -1,4 +1,6 @@
-require 'pry'
+# Went a little ham on this one, implementing AStar and animating the search algorithm. 
+# I didn't really do a good job making things generic, and just solved part 2 with a simpler
+# implementation.
 
 class Node
   attr_accessor :r, :c, :v, :g
@@ -40,12 +42,6 @@ end
 class DayTwelveNode < AStarNode
   def neighbors
     g.neighbors_90(self).select { |n| v.ord - n.v.ord >= -1 }
-  end
-end
-
-class DayTwelveNodeTwo < AStarNode
-  def neighbors
-    g.neighbors_90(self).select { |n| v.ord - n.v.ord <= 1 }
   end
 end
 
@@ -217,69 +213,27 @@ end
 
 heuristic = -> (node, goal) { (node.r - goal.r).abs + (node.c - goal.c).abs }
 
-raw = [
-  'Sabqponm',
-  'abcryxxl',
-  'accszExk',
-  'acctuvwj',
-  'abdefghi'
-]
-
 raw = File.read('day12.txt').split("\n")
 
-# grid = Grid.new(raw, DayTwelveNode)
-# start = grid.find { |node| node.v == 'S' }
-# goal = grid.find { |node| node.v == 'E' }
-# start.v = 'a'
-# goal.v = 'z'
-
-# printer = ScreenPrinter.new
-# grid.rows.each do |row|
-#   row.each do |node|
-#     if node == goal
-#       printer.print_c(node.r, node.c, 'Z', :yellow) 
-#     else
-#       printer.print_c(node.r, node.c, node.v)
-#     end
-#   end
-#   printer.newline
-# end
-
-# found = a_star(grid, start, goal, heuristic, printer)
-
-# printer.move_to(grid.rows.length + 2, 0)
-# puts found.path.length - 1
-
-# part 2
-
-grid = Grid.new(raw, DayTwelveNodeTwo)
-start = grid.find { |node| node.v == 'E' }
-start.v = 'z'
-old_start = grid.find { |node| node.v == 'S' }
-old_start.v = 'a'
+grid = Grid.new(raw, DayTwelveNode)
+start = grid.find { |node| node.v == 'S' }
+goal = grid.find { |node| node.v == 'E' }
+start.v = 'a'
+goal.v = 'z'
 
 printer = ScreenPrinter.new
 grid.rows.each do |row|
   row.each do |node|
-    printer.print_c(node.r, node.c, node.v)
+    if node == goal
+      printer.print_c(node.r, node.c, 'Z', :yellow) 
+    else
+      printer.print_c(node.r, node.c, node.v)
+    end
   end
   printer.newline
 end
 
-class Heuristic
-  def initialize
-    @counter = 9223372036854775807
-  end
+found = a_star(grid, start, goal, heuristic, printer)
 
-  def call(*)
-    @counter -= 1
-  end
-end
-
-# visit without returning a specific path
-a_star(grid, start, nil, Heuristic.new, printer)
-
-binding.pry
-
-
-
+printer.move_to(grid.rows.length + 2, 0)
+puts found.path.length - 1
