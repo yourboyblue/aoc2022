@@ -1,9 +1,16 @@
 class Grid
   include Enumerable
 
+  attr_accessor :col_print_range
+  attr_accessor :row_print_range
+  attr_accessor :print_leader
+
   def initialize(r_max, c_max, node_class = Node)
     @node_class = node_class
     @grid = r_max.times.map { Array.new(c_max) }
+    @col_print_range = 0..c_max
+    @row_print_range = 0..r_max
+    @print_leader = "\n\n"
 
     if block_given?
       r_max.times do |r|
