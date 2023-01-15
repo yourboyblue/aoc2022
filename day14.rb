@@ -91,9 +91,6 @@ rock_points.each do |c, r|
   grid.put(r, c, '#')
 end
 
-col_min = rock_points.map(&:first).min
-grid.col_print_range = (col_min..col_max)
-
 def find_rest_point(grid, part)
   col = 500
   col += grid.left_shift if part == 2
@@ -180,9 +177,6 @@ end
 rock_points.each do |c, r| 
   grid.put(r, c, '#')
 end
-
-col_min = rock_points.map(&:first).min
-grid.col_print_range = ((col_min-10)..col_max)
 
 simulate(grid, part: 2)
 puts grid.count { |n| n.sand? }
