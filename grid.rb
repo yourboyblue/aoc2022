@@ -98,9 +98,10 @@ class Grid
     g
   end
 
-  def print_grid(r_range: 0..r_max, c_range: 0..c_max)
-    @grid.slice(r_range).each do |r|
-      r.slice(c_range).each do |c|
+  def print_grid
+    print print_leader
+    @grid.slice(row_print_range).each do |r|
+      r.slice(col_print_range).each do |c|
         print "#{c.v}"
       end
       print "\n"
@@ -123,6 +124,18 @@ class Grid
   
     def to_s
       inspect
+    end
+
+    def b
+      g.b(self)
+    end
+  
+    def bl
+      g.bl(self)
+    end
+  
+    def br
+      g.br(self)
     end
   end
 end
