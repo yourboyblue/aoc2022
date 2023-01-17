@@ -78,10 +78,6 @@ def cover?(a, b)
   a[0] <= b[0] && b[1] <= a[1]
 end
 
-def continuous?(a, b)
-  a[1] >= (b[0] - 1)
-end
-
 def discontinuous?(a, b)
   a[1] < (b[0] - 1)
 end
@@ -97,25 +93,21 @@ loop do
   covered = applicable_sensors.map { |sensor, manhattan| m_slice(sensor, manhattan, y) }
   
   # sort ranges by x start, then by longest first
-  covered = covered.sort(&range_order)
+  covered.sort!(&range_order)
 
-  # merge ranges completely covered by another range
-  merged = []
-  while covered.any?
-    range = covered.shift
-    potential_cover = merged.last
-    if potential_cover
-      merged << range unless cover?(potential_cover, range)
-    else
-      merged << range
+  # ignore ranges completely covered by another range
+  merged = covered.each_with_object([]).with_index do |(range, acc), i|
+    if i > 0
+      acc << range unless cover?(acc.last, range)
+    else 
+      acc << range
     end
   end
 
-  # check if all ranges overlap -- if not, we've found a row with a gap representing the beacon we don't know about
-  cons = merged.each_cons(2).map
-  unless cons.all? { |a, b| continuous?(a, b) }
-    _, b = cons.find { |a, b| discontinuous?(a, b) }
-    x = b[0] - 1 # found it
+  # check if the row is covered by continuous ranges -- if not, the beacon is in the gap
+  gap = merged.each_cons(2).map.find { |a, b| discontinuous?(a, b) }
+  if gap
+    x = gap[1][0] - 1
     break
   end
 
