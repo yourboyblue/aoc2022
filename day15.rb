@@ -105,6 +105,8 @@ loop do
   end
 
   # check if the row is covered by continuous ranges -- if not, the beacon is in the gap
+  #
+  # on review, i got lucky here -- a single range like 1..4_000_000 where the beacon is @ 0 fails with this approach
   gap = merged.each_cons(2).map.find { |a, b| discontinuous?(a, b) }
   if gap
     x = gap[1][0] - 1
